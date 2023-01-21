@@ -4,3 +4,5 @@
     {
         public ReelRosterSettings ReelRosterSettings { get; set; }
         public TMDBSettings TMDBSettings { get; set; }
+    }
+}
