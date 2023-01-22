@@ -42,6 +42,8 @@ namespace ReelRoster
 
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
 
+            services.AddTransient<SeedService>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
