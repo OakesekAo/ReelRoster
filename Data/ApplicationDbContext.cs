@@ -12,9 +12,7 @@ namespace ReelRoster.Data
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
-
         }
-
 
         public DbSet<Collection> Collection { get; set; }
     }
