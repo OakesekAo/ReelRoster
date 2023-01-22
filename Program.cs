@@ -21,6 +21,7 @@ namespace ReelRoster
                                     .CreateScope()
                                     .ServiceProvider
                                     .GetRequiredService<SeedService>();
+
             await dataService.ManageDataAsync();
             host.Run();
         }

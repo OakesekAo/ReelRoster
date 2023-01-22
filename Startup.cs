@@ -32,10 +32,12 @@ namespace ReelRoster
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseNpgsql(
                     ConnectionService.GetConnectionString(Configuration)));
+
             services.AddDatabaseDeveloperPageExceptionFilter();
 
             services.AddIdentity<IdentityUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
+
             services.AddControllersWithViews();
 
 
