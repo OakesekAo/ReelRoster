@@ -24,9 +24,36 @@ namespace ReelRoster.Services
             _httpClient = httpClient;
         }
 
-        public Task<ActorDetail> ActorDetailAsync(int id)
+        public async Task<ActorDetail> ActorDetailAsync(int id)
         {
-            throw new System.NotImplementedException();
+            //Setup a default return object
+            ActorDetail actorDetail = new();
+
+            //Assemble the full request uri string
+            var query = $"{_appSettings.TMDBSettings.BaseUrl}/person/{id}";
+            var queryParams = new Dictionary<string, string>()
+            {
+                {"api_key", _appSettings.ReelRosterSettings.TmDbApiKey },
+                {"language", _appSettings.TMDBSettings.QueryOptions.Language }
+            };
+
+            var requestUri = QueryHelpers.AddQueryString(query, queryParams);
+
+            // Create a lient and execute the request
+            var client = _httpClient.CreateClient();
+            var request = new HttpRequestMessage(HttpMethod.Get, requestUri);
+            var response = await client.SendAsync(request);
+
+            //Return the MovieSearch object
+            if (response.IsSuccessStatusCode)
+            {
+                using var responseStream = await response.Content.ReadAsStreamAsync();
+
+                var dcjs = new DataContractJsonSerializer(typeof(ActorDetail));
+                actorDetail = dcjs.ReadObject(responseStream) as ActorDetail;
+            }
+
+            return actorDetail;
         }
 
         public async Task<MovieDetail> MovieDetailAsync(int id)
