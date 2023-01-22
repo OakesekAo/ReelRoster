@@ -2,10 +2,16 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualBasic;
+
 using ReelRoster.Data;
+using ReelRoster.Models;
 using ReelRoster.Models.Settings;
+using ReelRoster.Models.Database;
+
 using System.Linq;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using Collection = ReelRoster.Models.Database.Collection;
 
 namespace ReelRoster.Services
 {
@@ -14,9 +20,9 @@ namespace ReelRoster.Services
         private readonly AppSettings _appSettings;
         private readonly ApplicationDbContext _dbContext;
         private readonly UserManager<IdentityUser> _userManager;
-        private readonly RoleManager<IdentityUser> _roleManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public SeedService(IOptions<AppSettings> appSettings, ApplicationDbContext dbContext, UserManager<IdentityUser> userManager, RoleManager<IdentityUser> roleManager)
+        public SeedService(IOptions<AppSettings> appSettings, ApplicationDbContext dbContext, UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager)
         {
             _appSettings = appSettings.Value;
             _dbContext = dbContext;
@@ -29,7 +35,7 @@ namespace ReelRoster.Services
             await UpdateDatabaseAsync();
             await SeedRolesAsync();
             await SeedUserAsync();
-            await SeedCollection();
+            await SeedCollections();
         }
 
         private async Task UpdateDatabaseAsync()
@@ -61,7 +67,7 @@ namespace ReelRoster.Services
             await _userManager.CreateAsync(newUser, credentials.Role);
         }
 
-        private async Task SeedCollection()
+        private async Task SeedCollections()
         {
             if (_dbContext.Collection.Any()) return;
 
