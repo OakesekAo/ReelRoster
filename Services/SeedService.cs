@@ -46,8 +46,8 @@ namespace ReelRoster.Services
         private async Task SeedRolesAsync()
         {
             if (_dbContext.Roles.Any()) return;
-            var adminRole = _appSettings.ReelRosterSettings.DefaultCredentials.Role;
 
+            var adminRole = _appSettings.ReelRosterSettings.DefaultCredentials.Role;
             await _roleManager.CreateAsync(new IdentityRole(adminRole));
         }
 

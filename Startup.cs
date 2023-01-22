@@ -35,6 +35,9 @@ namespace ReelRoster
 
             services.AddDatabaseDeveloperPageExceptionFilter();
 
+
+            services.AddRazorPages();
+
             services.AddIdentity<IdentityUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
