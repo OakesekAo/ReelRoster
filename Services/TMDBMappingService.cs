@@ -25,7 +25,22 @@ namespace ReelRoster.Services
 
         public ActorDetail MapActorDetail(ActorDetail actor)
         {
+            // Imgae
+            actor.profile_path = BuildCastImage(actor.profile_path);
 
+            // Bio
+            if (string.IsNullOrEmpty(actor.biography))
+            {
+                actor.biography = "Not Available";
+            }
+
+            //Birthday
+            if(string.IsNullOrEmpty(actor.birthday))
+                actor.birthday = "Not Available";
+            else
+                actor.birthday = DateTime.Parse(actor.birthday).ToString("MMM dd, yyyy");
+
+            return actor;
         }
 
         public async Task<Movie> MapMovieDetailAsync(MovieDetail movie)
