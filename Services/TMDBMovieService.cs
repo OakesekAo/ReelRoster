@@ -5,6 +5,7 @@ using ReelRoster.Models.Settings;
 using ReelRoster.Models.TMDB;
 using ReelRoster.Services.Interfaces;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Net.Http;
 using System.Runtime.Serialization.Json;
@@ -28,9 +29,37 @@ namespace ReelRoster.Services
             throw new System.NotImplementedException();
         }
 
-        public Task<MovieDetail> MovieDetailAsync(int id)
+        public async Task<MovieDetail> MovieDetailAsync(int id)
         {
-            throw new System.NotImplementedException();
+            //Setup a default return object
+            MovieDetail movieDetail = new();
+
+            //Assemble the full request uri string
+            var query = $"{_appSettings.TMDBSettings.BaseUrl}/movie/{id}";
+
+            var queryParams = new Dictionary<string, string>()
+            {
+                {"api_key", _appSettings.ReelRosterSettings.TmDbApiKey },
+                {"language", _appSettings.TMDBSettings.QueryOptions.Language },
+                {"append_to_response", _appSettings.TMDBSettings.QueryOptions.AppendToResponse }
+            };
+
+            var requestUri = QueryHelpers.AddQueryString(query, queryParams);
+
+            // Create a lient and execute the request
+            var client = _httpClient.CreateClient();
+            var request = new HttpRequestMessage(HttpMethod.Get, requestUri);
+            var response = await client.SendAsync(request);
+
+            //Return the MovieSearch object
+            if (response.IsSuccessStatusCode)
+            {
+                using var responseStream = await response.Content.ReadAsStreamAsync();
+                var dcjs = new DataContractJsonSerializer(typeof(MovieDetail));
+                movieDetail = dcjs.ReadObject(responseStream) as MovieDetail;
+            }
+
+            return movieDetail;
         }
 
         public async Task<MovieSearch> SearchMoviesAsync(MovieCategory category, int count)
@@ -50,7 +79,7 @@ namespace ReelRoster.Services
 
             var requestUri = QueryHelpers.AddQueryString(query, queryParams);
 
-            // Create a lient and execute the reuest
+            // Create a lient and execute the request
             var client = _httpClient.CreateClient();
             var request = new HttpRequestMessage(HttpMethod.Get, requestUri);
             var response = await client.SendAsync(request);
