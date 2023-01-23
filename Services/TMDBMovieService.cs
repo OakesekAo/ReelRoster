@@ -33,7 +33,7 @@ namespace ReelRoster.Services
             var query = $"{_appSettings.TMDBSettings.BaseUrl}/person/{id}";
             var queryParams = new Dictionary<string, string>()
             {
-                {"api_key", _appSettings.ReelRosterSettings.TmDbApiKey },
+                {"api_key", _appSettings.ReelRosterSettings.TMDBApiKey },
                 {"language", _appSettings.TMDBSettings.QueryOptions.Language }
             };
 
@@ -66,7 +66,7 @@ namespace ReelRoster.Services
 
             var queryParams = new Dictionary<string, string>()
             {
-                {"api_key", _appSettings.ReelRosterSettings.TmDbApiKey },
+                {"api_key", _appSettings.ReelRosterSettings.TMDBApiKey },
                 {"language", _appSettings.TMDBSettings.QueryOptions.Language },
                 {"append_to_response", _appSettings.TMDBSettings.QueryOptions.AppendToResponse }
             };
@@ -99,7 +99,7 @@ namespace ReelRoster.Services
 
             var queryParams = new Dictionary<string, string>()
             {
-                {"api_key", _appSettings.ReelRosterSettings.TmDbApiKey },
+                {"api_key", _appSettings.ReelRosterSettings.TMDBApiKey },
                 {"language", _appSettings.TMDBSettings.QueryOptions.Language },
                 {"page", _appSettings.TMDBSettings.QueryOptions.Page }
             };
@@ -118,7 +118,7 @@ namespace ReelRoster.Services
                 using var responseStream = await response.Content.ReadAsStreamAsync();
                 movieSearch = (MovieSearch)dcjs.ReadObject(responseStream);
                 movieSearch.results = movieSearch.results.Take(count).ToArray();
-                movieSearch.results.ToList().ForEach(r => r.poster_path = $"{_appSettings.TMDBSettings.BaseImagePath}/{_appSettings.ReelRosterSettings.DefualtPosterSize}/{r.poster_path}");
+                movieSearch.results.ToList().ForEach(r => r.poster_path = $"{_appSettings.TMDBSettings.BaseImagePath}/{_appSettings.ReelRosterSettings.DefaultPosterSize}/{r.poster_path}");
             }
 
             return movieSearch;
