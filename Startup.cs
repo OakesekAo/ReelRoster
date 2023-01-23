@@ -52,6 +52,7 @@ namespace ReelRoster
             services.AddHttpClient();
             services.AddScoped<IRemoteMovieService, TMDBMovieService>();
             services.AddScoped<IDataMappingSerivce, TMDBMappingService>();
+            services.AddSingleton<IImageService, BasicImageService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
