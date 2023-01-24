@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace ReelRoster.Services.Interfaces
 {
-    public interface IDataMappingSerivce
+    public interface IDataMappingService
     {
         Task<Movie> MapMovieDetailAsync(MovieDetail movie);
         ActorDetail MapActorDetail(ActorDetail actor);

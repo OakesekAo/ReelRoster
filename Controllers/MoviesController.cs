@@ -16,9 +16,9 @@ namespace ReelRoster.Controllers
         private readonly ApplicationDbContext _context;
         private readonly IImageService _imageService;
         private readonly IRemoteMovieService _tmdbMovieService;
-        private readonly IDataMappingSerivce _tmdbMappingService;
+        private readonly IDataMappingService _tmdbMappingService;
 
-        public MoviesController(IOptions<AppSettings> appSettings, ApplicationDbContext context, IImageService imageService, IRemoteMovieService tmdbMovieService, IDataMappingSerivce tmdbMappingService)
+        public MoviesController(IOptions<AppSettings> appSettings, ApplicationDbContext context, IImageService imageService, IRemoteMovieService tmdbMovieService, IDataMappingService tmdbMappingService)
         {
             _appSettings = appSettings.Value;
             _context = context;

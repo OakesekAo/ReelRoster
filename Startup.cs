@@ -48,10 +48,11 @@ namespace ReelRoster
 
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
 
+            Console.WriteLine(Configuration["AppSettings:ReelRosterSettings:TMDBApiKey"]);
             services.AddTransient<SeedService>();
             services.AddHttpClient();
             services.AddScoped<IRemoteMovieService, TMDBMovieService>();
-            services.AddScoped<IDataMappingSerivce, TMDBMappingService>();
+            services.AddScoped<IDataMappingService, TMDBMappingService>();
             services.AddSingleton<IImageService, BasicImageService>();
         }
 

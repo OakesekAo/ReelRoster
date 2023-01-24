@@ -12,7 +12,7 @@ using ReelRoster.Services.Interfaces;
 
 namespace ReelRoster.Services
 {
-    public class TMDBMappingService : IDataMappingSerivce
+    public class TMDBMappingService : IDataMappingService
     {
         private AppSettings _appSettings;
         private readonly IImageService _imageService;
