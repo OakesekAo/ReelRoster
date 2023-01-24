@@ -195,12 +195,44 @@ namespace ReelRoster.Controllers
             var movie = await _context.Movie.FindAsync(id);
             _context.Movie.Remove(movie);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Library", "Movies");
         }
 
         private bool MovieExists(int id)
         {
             return _context.Movie.Any(e => e.Id == id);
+        }
+
+        public async Task<IActionResult> Details(int? id, bool local = false)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            Movie movie = new();
+            if (local)
+            {
+                //get the movie data from DB
+                movie = await _context.Movie.Include(m => m.Cast)
+                                            .Include(m => m.Crew)
+                                            .FirstOrDefaultAsync(m => m.Id == id);
+            }
+            else
+            {
+                //get the movie from the api
+                var movieDetail = await _tmdbMovieService.MovieDetailAsync((int)id);
+                movie = await _tmdbMappingService.MapMovieDetailAsync(movieDetail);
+            }
+
+            if(movie == null)
+            {
+                return NotFound();
+            }
+
+            ViewData["Local"] = local;
+            return View(movie);
+
         }
 
         private async Task AddToMovieCollection(int movieId, string collectionName)
