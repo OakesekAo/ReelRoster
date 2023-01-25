@@ -1,0 +1,125 @@
+﻿@using ReelRoster.Models.Database
+@using ReelRoster.Services.Interfaces;
+@model Movie
+@inject IImageService _imageService
+
+
+
+<div class="row">
+    <div class="col-sm-12 col-md-6">
+        <div class="row">
+            <img src="@_imageService.DecodeImage(Model.Poster, Model.PosterType)" class="w-100" alt="..." />
+        </div>
+        <div class="row">
+            <button class="btn btn-lg btn-block btn-danger font-weight-bold" data-toggle="modal" data-target="#trailer">WATCH TRAILER</button>
+        </div>
+    </div>
+    <div class="col-sm-12 col-md-6">
+        <div class="row">
+            <div class="col h5">
+                <span class="font-weight-bolder mr-2">TITLE</span> @Model.Title
+            </div>
+        </div>
+
+        <hr />
+
+        <div class="row">
+            <div class="col h5">
+                <span class="font-weight-bolder mr-2">RELEASED</span> @Model.ReleaseDate.ToString("MMM dd, yyyy")
+            </div>
+        </div>
+        <hr />
+
+
+        <div class="row">
+            <div class="col h5">
+                <span class="font-weight-bolder mr-2">RATING</span> @Model.Rating
+            </div>
+        </div>
+        <hr />
+
+
+        <div class="row">
+            <div class="col h5">
+                <span class="font-weight-bolder mr-2">REVIEWS</span> @Model.VoteAverage /10
+            </div>
+        </div>
+        <hr />
+
+
+        <div class="row">
+            <div class="col h5">
+                <span class="font-weight-bolder h-5">OVERVIEW:</span>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col h5">
+                <span class="font-weight-bolder mr-2">@Model.Overview</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="row">
+    <div class="col">
+        <span class="h5 font-weight-bolder">STARRING:</span>
+    </div>
+</div>
+@foreach (var actor in Model.Cast.Take(5))
+{
+    <div class="row">
+        <div class="col">
+            <div class="card mb-3">
+                <div class="row no-gutters">
+                    <div class="col-md-2">
+                        <img src="@actor.ImageUrl" class="img-fluid" style="width: 10rem" alt="...">
+                    </div>
+                    <div class="col-md-10">
+                        <div class="card-body">
+                            <h5 class="card-title">Name: @actor.Name</h5>
+                            <p class="card-text">Character: @actor.Character</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+<!-- Modal-->
+<div class="modal fade" id="trailer" tabindex="-1" role="dialog" aria-labelledby="trailerLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">@Model.Title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="embed-responsive embed-responsive-16by9">
+                    @{
+                        //I am isolating a piece of data in order to use it as my embeded source
+                        var key = Model.TrailerUrl.Split("=").Last();
+                        var source = $"https://www.youtube.com/embed/{key}";
+                    }
+
+                    <iframe width="560" height="315" src="@source"
+                            title="YouTube video player" frameborder="0"
+                            allow="accelerometer" ; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;
+                            allowfullscreen>
+                        <
+                    </iframe>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
