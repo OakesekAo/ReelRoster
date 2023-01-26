@@ -1,0 +1,36 @@
+﻿@using ReelRoster.Models.TMDB
+@model ActorDetail
+
+<div class="media">
+    <img src="@Model.profile_path" class="mr-3" alt="...">
+    <div class="media-body">
+        <table class="table table-hover">
+            <tbody>
+                <tr>
+                    <td>Name:</td>
+                    <td>
+                        @Model.name
+                    </td>
+                </tr>
+                <tr>
+                    <td>Biography:</td>
+                <td>
+                        @Model.biography
+                    </td>
+                </tr>
+                <tr>
+                    <td>Birthday:</td>
+                    <td>
+                        @Model.birthday
+                    </td>
+                </tr>
+                <tr>
+                    <td>Place of Birth:</td>
+                <td>
+                        @Model.place_of_birth
+                    </td>
+                </tr>               
+            </tbody>
+        </table>
+        </div>
+</div>
