@@ -4,7 +4,7 @@
     ViewData["Title"] = "Reel Roster";
 }
 
-@*<style>
+<style>
     .clapOverview {
         display: -webkit-box;
         -webkit-line-clamp: 3;
@@ -12,7 +12,7 @@
         overflow: hidden;
     }
 
-    .clapTitle {
+    @*  .clapTitle {
         display: -webkit-box;
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
@@ -21,15 +21,15 @@
 
     h5.card.title {
         height: 2.5em;
-    }
-</style>*@
+    }*@
+</style>
 
 <section class="px-1">
         <div class="row">
             <span class="btn btn-lg w-100 btn-warning font-weight-bolder border-dark">UPCOMING</span>
         </div>
         <div class="row">
-            <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel" data-interval="3000">
+            <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
                 <div class="carousel-inner">
 
                 <div class="card-group">
@@ -43,7 +43,7 @@
                                     {
                                         <div class="col-sm-3 mb-2">
                                             <div class="card h-100">
-                                                <img src="@movie.poster_path" class="card-img-top d-flex w-100" alt="..." />
+                                                <img src="@movie.poster_path" class="card-img-top d-block w-100" alt="..." />
                                                 <div class="card-body" style="overflow: hidden">
                                                     <h5 class="card-title">@movie.title</h5>
                                                     <p class="card-text"> @movie.overview</p>
