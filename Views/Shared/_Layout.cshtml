@@ -18,6 +18,11 @@
     <link rel="favicon" typeof="image/png" href="~/favicon.png" />
 
 </head>
+@{
+    var title = ViewData["Title"];
+    var action = ViewData["Action"];
+    var headerClass = ((string?)action == "Details" ) ? "pb-2 tallHeader" : "pb-2";
+}
 <body>
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
@@ -39,17 +44,28 @@
                     <partial name="_LoginPartial" />
                 </div>
             </div>
-        </nav>
+        </nav>@*
+        @if (title?.ToString() != "Import")
+        {
+            <form asp-action="Search" asp-controller="Movies">
+                <div class="input-group">
+                    <input class="form-control" type="search" name="searchString"
+                       placeholder="Search Term" />
+                    <input type="submit" class="btn btn-outline-primary" value="Search" />
+                </div>
+            </form>
+        }
+*@
     </header>
     <div class="container">
-        <main role="main" class="pb-3">
+        <main>
             @RenderBody()
         </main>
     </div>
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2023 - ReelRoster - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; 2023 - ReelRoster - <a asp-area="" asp-controller="Home" asp-action="Index">Index</a>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
