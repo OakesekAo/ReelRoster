@@ -1,0 +1,262 @@
+﻿@using ReelRoster.Models.Database
+
+
+@model Collection
+
+<div class="row">
+    <div class="col-md-10 text-center mx-auto bg-white">
+        <h2 class="d-inline-block text-dark my-3 fredoka w-75">MANAGE COLLECTIONS</h2>
+        <form asp-controller="MovieCollections" asp-action="Index" id="collectionForm">
+            <div class="row">
+                <div class="col-10">
+                    <select asp-for="Id" asp-items="@ViewBag.CollectionId" class="form-control" id="collectionList"></select>
+                </div>
+                <div class="col-2">
+                    <button type="button" class="btn btn-dark w-100" data-bs-toggle="modal" data-bs-target="#addCollectionModal">ADD</button>
+                </div>
+                <div class="col-12">
+                    <hr class="text-dark" />
+                </div>
+            </div>
+            <div class="row gx-4">
+                <div class="col-5">
+                    <h6 class="text-dark fw-bold">IN COLLECTION</h6>
+                    <select name="idsInCollection" class="form-select w-100" size="8" id="inCollection" multiple>
+                        @foreach (var movie in ViewBag.IdsInCollection)
+                        {
+                            <option class="fw-bold" value="@movie.Value">@movie.Text</option>
+                        }
+                    </select>
+                    <div class="my-1">
+                        @{
+                            var classString0 = "btn btn-sm btn-outline-warning btnArrow w-25";
+                        }
+                        <button type="button" class="@classString0" id="orderUp"><span class="material-symbols-outlined">keyboard_arrow_up</span></button>
+                        <button type="button" class="@classString0" id="orderDown"><span class="material-symbols-outlined">keyboard_arrow_down</span></button>
+                    </div>
+                </div>
+                <div class="col-2 d-flex align-items-center justify-content-center p-0">
+                    <div class="flex-column">
+                        @{
+                            var classString1 = "btn btn-sm btn-outline-warning mb-1 btnArrow";
+                        }
+                        <button type="button" class="@classString1" id="add"><span class="material-symbols-outlined">keyboard_arrow_left</span></button>
+                        <button type="button" class="@classString1" id="remove"><span class="material-symbols-outlined">keyboard_arrow_right</span></button>
+                    </div>
+                </div>
+                <div class="col-5">
+                    <h6 class="text-dark fw-bold">NOT IN COLLECTION</h6>
+                    <select class="form-select w-100" size="8" id="notInCollection" multiple>
+                        @foreach (var movie in ViewBag.IdsNotInCollection)
+                        {
+                            <option class="fw-bold" value="@movie.Value">@movie.Text</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-12 mb-3">
+                    <hr class="text-dark" />
+                    <button type="submit" class="btn btn-dark w-100">SUBMIT</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="col-12">
+        <h3 class="text-center mt-4"><a class="nav-link text-warning" asp-controller="Movies" asp-action="Import">Import</a></h3>
+    </div>
+</div>
+
+@* MODAL *@
+<div class="modal fade" id="addCollectionModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Movie Collection</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form asp-action="Create" asp-controller="Collections">
+                    <div class="form-group mb-3">
+                        <label asp-for="Name" class="control-label">Name:</label>
+                        <input asp-for="Name" class="form-control" autocomplete="off" />
+                    </div>
+                    <div class="form-group mb-3">
+                        <label asp-for="Description" class="control-label">Description:</label>
+                        <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-outline-warning">CREATE</button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // OPTION class to deal with events
+        class cOption {
+            constructor(el) {
+                (el == null) ? this.el = document.createElement('option') : this.el = el;
+                this.clickHandler = this.toggleSelected.bind(this, this.el);
+                this.addEvents();
+            }
+
+            addEvents() {
+                this.el.addEventListener('click', this.clickHandler);
+            }
+
+            removeEvents() {
+                this.el.removeEventListener('click', this.clickHandler);
+            }
+
+            toggleSelected(obj) {
+                if (obj.getAttribute("selected")) {
+                    obj.removeAttribute("selected");
+                    obj.setAttribute("class", "fw-bold");
+                    return;
+                }
+                obj.setAttribute("selected", true);
+                obj.setAttribute("class", "fw-bold fst-italic text-danger asterisk");
+            }
+        }
+
+        // Redirect after collection is changed
+        const collectionList = document.getElementById("collectionList");
+        collectionList.addEventListener("change", () => {
+            let url = window.location.href.split("Index");
+            window.location.href = url[0] + "/Index?Id=" + collectionList.value;
+        });
+
+        const remove = document.getElementById("remove");
+        const add = document.getElementById("add");
+        const inColl = document.getElementById("inCollection");
+        const notInColl = document.getElementById("notInCollection");
+        // ORDER functions
+        const moveUp = document.getElementById("orderUp");
+        const moveDown = document.getElementById("orderDown");
+
+        // add event handlers to options
+        addListener(inColl);
+        addListener(notInColl);
+
+        // pass "add" to add to collection OR "remove" to remove it from collection
+        add.addEventListener("click", () => {
+            swap("add");
+        });
+
+        remove.addEventListener("click", () => {
+            swap("remove");
+        });
+
+        moveUp.addEventListener("click", () => {
+            move("up");
+        });
+
+        moveDown.addEventListener("click", () => {
+            move("down");
+        });
+
+        function swap(action) {
+            let collection, selected;
+
+            (action == "add") ? collection = notInColl : collection = inColl;
+
+            selected = Array.from(collection);
+            selected = selected.filter(option => option.hasAttribute("selected"));
+
+            makeOptions(collection, selected);
+            // recast IDs after change
+            castId(document.getElementById("inCollection"));
+            castId(document.getElementById("notInCollection"));
+        }
+
+        function makeOptions(list, arr) {
+            let newOption, toRemove = [],
+                addOption = [document.getElementById("inCollection"), document.getElementById("notInCollection")],
+                removeOption = [document.getElementById("notInCollection"), document.getElementById("inCollection")];
+
+            // addOption means we are adding options to collection | removeOption means we are removing from collection
+            (list.getAttribute("id") == "notInCollection") ? list = addOption : list = removeOption;
+
+            // count options in opposite list
+            let count = list[0].length;
+
+            // INVESTIGATE: can I just use clone instead of breaking it down like this?
+            // 1. pass arr as argument when creating a new cOption
+            // 2. clone node
+            // 3. append clone
+
+            for (let i = 0; i < arr.length; i++) {
+                // instantiate an object from cOption class
+                newOption = new cOption;
+                newOption.el.id = list[0].id + (i + count);
+                newOption.el.setAttribute("class", "fw-bold");
+                newOption.el.textContent = arr[i].textContent;
+                newOption.el.value = arr[i].value;
+                // log id of option
+                toRemove.push(arr[i].id);
+                // append new option
+                list[0].appendChild(newOption.el);
+            }
+
+            for (let i = 0; i < toRemove.length; i++) {
+                // remove from opposite list
+                document.getElementById(toRemove[i]).remove();
+            }
+        }
+
+        function addListener(list) {
+            let newOption;
+            if (list.options.length == 0) return;
+
+            for (let i = 0; i < list.options.length; i++) {
+                newOption = new cOption(list.options[i]);
+                newOption.el.id = list.id + i;
+            }
+        }
+
+        function castId(list) {
+            if (list == null) return;
+
+            for (let i = 0; i < list.length; i++) {
+                list.options[i].id = list.id + i;
+            }
+        }
+
+        function handleMove(element, position) {
+            let clone = new cOption(element.cloneNode(true));
+            inColl.insertBefore(clone.el, inColl.children[position]);
+            element.remove();
+            castId(inColl);
+            return;
+        }
+
+        function move(action) {
+            let arrColl = Array.from(inColl), val,
+                chop = 2; // # places to slice off the end of the id, changes if its the 1s or 10s place, needs 100s if collection has > 99 movies
+            let selected = arrColl.filter(option => option.hasAttribute("selected"));
+            if (selected.length > 1) return alert("You can only select 1 element when changing the order.");
+
+            val = selected[0].id.slice(selected[0].id.length - chop);
+            let isnum = /^\d+$/.test(val);
+            if (!isnum) chop = 1;
+
+            let pos = parseInt(selected[0].id.slice(selected[0].id.length - chop));
+
+            if (action == "up" && pos == 0) return alert("This element is already at the top.");
+            if (action == "down" && pos == arrColl.length - 1) return alert("This element is already at the bottom.");
+
+            // pass action to function that handles basic intended movement cases
+            (action == "up") ? handleMove(selected[0], pos - 1) : handleMove(selected[0], pos + 2);
+        }
+
+        document.getElementById("collectionForm").addEventListener("submit", () => {
+            var c = document.querySelector("#inCollection");
+            for (var i = 0; i < c.options.length; i++) {
+                c.options[i].selected = true;
+            }
+        });
+    </script>
+}

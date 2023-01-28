@@ -74,23 +74,52 @@ namespace ReelRoster.Controllers
         [HttpGet]
         public async Task<IActionResult> Search(string searched)
         {
-            List<Movie> movies = new List<Movie>();
-            List<Movie> actorMovies = new List<Movie>();
-            List<Movie> allMovies = await _context.Movie.ToListAsync();
+            searched = searched.ToLower();
+            var movies = await _context.Movie.Where(m => m.Title.ToLower() == searched || m.Cast.Any(a => a.Name.ToLower() == searched)).ToListAsync();
 
-            //check all movies
-            foreach (Movie movie in allMovies)
+            if (movies.Count == 0)
             {
-                if(movie.Cast.Any(m=> m.Name.ToLower() == searched.ToLower()))
-                {
-                    actorMovies.Add(movie);
-                }
-                else if (movie.Title == searched)
-                {
-                    movies.Add(movie);
-                }
+                return NotFound();
+            }
+            else
+            {
+                return View(movies);
             }
         }
+        //public async Task<IActionResult> Search(string searched)
+        //{
+        //    List<Movie> movies = new List<Movie>();
+        //    List<Movie> actorMovies = new List<Movie>();
+        //    List<Movie> allMovies = await _context.Movie.ToListAsync();
+
+        //    //check all movies
+        //    foreach (Movie movie in allMovies)
+        //    {
+        //        if(movie.Cast.Any(m=> m.Name.ToLower() == searched.ToLower()))
+        //        {
+        //            actorMovies.Add(movie);
+        //        }
+        //        else if (movie.Title == searched)
+        //        {
+        //            movies.Add(movie);
+        //        }
+        //    }
+
+        //    List<Movie> fullList = movies.Union(actorMovies).ToList();
+
+        //    if(fullList.Count == 0)
+        //    {
+        //        return NotFound();
+        //    }
+        //    else
+        //    {
+        //        if(fullList.Count > 0)
+        //        {
+        //            return View(fullList);
+        //        }
+        //        return NotFound();
+        //    }
+        //}
 
 
         // GET: Temp/Create

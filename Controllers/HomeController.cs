@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using ReelRoster.Data;
 using ReelRoster.Enums;
 using ReelRoster.Models;
+using ReelRoster.Models.Settings;
 using ReelRoster.Models.ViewModels;
 using ReelRoster.Services.Interfaces;
 using System;
