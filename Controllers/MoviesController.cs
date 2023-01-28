@@ -7,6 +7,7 @@ using ReelRoster.Models.Database;
 using ReelRoster.Models.Settings;
 using ReelRoster.Services.Interfaces;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -69,6 +70,28 @@ namespace ReelRoster.Controllers
             var movies = await _context.Movie.ToListAsync();
             return View(movies);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Search(string searched)
+        {
+            List<Movie> movies = new List<Movie>();
+            List<Movie> actorMovies = new List<Movie>();
+            List<Movie> allMovies = await _context.Movie.ToListAsync();
+
+            //check all movies
+            foreach (Movie movie in allMovies)
+            {
+                if(movie.Cast.Any(m=> m.Name.ToLower() == searched.ToLower()))
+                {
+                    actorMovies.Add(movie);
+                }
+                else if (movie.Title == searched)
+                {
+                    movies.Add(movie);
+                }
+            }
+        }
+
 
         // GET: Temp/Create
         public IActionResult Create()
