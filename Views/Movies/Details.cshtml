@@ -104,8 +104,13 @@
             <div class="modal-body">
                 <div class="embed-responsive embed-responsive-16by9">
                     @{
+                        var key = "";
                         //I am isolating a piece of data in order to use it as my embeded source
-                        var key = Model.TrailerUrl.Split("=").Last();
+                        @if (!string.IsNullOrEmpty(Model.TrailerUrl))
+                        {
+                           key = Model.TrailerUrl.Split("=").Last();
+                        }
+                        
                         var source = $"https://www.youtube.com/embed/{key}";
                     }
 
@@ -113,7 +118,6 @@
                             title="YouTube video player" frameborder="0"
                             allow="accelerometer" ; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;
                             allowfullscreen>
-                        
                     </iframe>
                 </div>
             </div>
