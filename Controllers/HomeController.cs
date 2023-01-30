@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using ReelRoster.Data;
 using ReelRoster.Enums;
 using ReelRoster.Models;
@@ -19,14 +20,16 @@ namespace ReelRoster.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly AppSettings _appSettings;
         private readonly ApplicationDbContext _context;
         private readonly IRemoteMovieService _tmdbMovieService;
 
-        public HomeController(ILogger<HomeController> logger, ApplicationDbContext context, IRemoteMovieService tmdbMovieService)
+        public HomeController(ILogger<HomeController> logger, ApplicationDbContext context, IRemoteMovieService tmdbMovieService, IOptions<AppSettings> appSettings)
         {
             _logger = logger;
             _context = context;
             _tmdbMovieService = tmdbMovieService;
+            _appSettings = appSettings.Value;
         }
 
         public async Task<IActionResult> Index()
@@ -44,6 +47,7 @@ namespace ReelRoster.Controllers
                 Upcoming = await _tmdbMovieService.SearchMoviesAsync(Enums.MovieCategory.upcoming, count)
             };
 
+            ViewData["api_key"] = _appSettings.ReelRosterSettings.TMDBApiKey;
             return View(data);
         }
 

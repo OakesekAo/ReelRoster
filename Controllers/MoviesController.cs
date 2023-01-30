@@ -41,6 +41,8 @@ namespace ReelRoster.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Import(int id)
         {
+
+            ViewData["api_key"] = _appSettings.ReelRosterSettings.TMDBApiKey;
             // if we already have this, warn user and dont import again
             if (_context.Movie.Any(m => m.MovieId == id))
             {
@@ -68,6 +70,7 @@ namespace ReelRoster.Controllers
 
         public async Task<IActionResult> Library()
         {
+            ViewData["api_key"] = _appSettings.ReelRosterSettings.TMDBApiKey;
             var movies = await _context.Movie.ToListAsync();
             return View(movies);
         }
@@ -124,6 +127,8 @@ namespace ReelRoster.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,MovieId,Title,TagLine,Overview,RunTime,ReleaseDate,Rating,VoteAverage,Poster,PosterType,Backdrop,BackdropType,TrailerUrl")] Movie movie, int collectionId)
         {
+
+            ViewData["api_key"] = _appSettings.ReelRosterSettings.TMDBApiKey;
             if (ModelState.IsValid)
             {
                 movie.PosterType = movie.PosterFile?.ContentType;
@@ -269,6 +274,7 @@ namespace ReelRoster.Controllers
                 return NotFound();
             }
 
+            ViewData["api_key"] = _appSettings.ReelRosterSettings.TMDBApiKey;
             ViewData["Local"] = local;
             return View(movie);
 
